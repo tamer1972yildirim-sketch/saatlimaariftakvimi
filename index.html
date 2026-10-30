@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saatli Maarif Takvimi</title>
+  <!-- Nostaljik Tipografi için Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Noto+Naskh+Arabic:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper-bg: #f3e9d2;
+      --paper-bg-dark: #e5d5b5;
+      --paper-edge: #ccb68c;
+      --maarif-red: #b51d18;
+      --maarif-red-dark: #85120e;
+      --ink-black: #1e1916;
+      --ink-muted: #4a4039;
+      --ink-Sepia: #5c4938;
+      --gold-accent: #9c7a3c;
+      --border-double: 3px double var(--ink-black);
+      --border-red: 2px solid var(--maarif-red);
+      --shadow-deep: 0 20px 50px rgba(20, 12, 5, 0.55), 0 4px 12px rgba(20, 12, 5, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #2b2118;
+      background-image:
+        radial-gradient(circle at 50% 25%, rgba(82, 58, 38, 0.65) 0%, rgba(28, 20, 14, 0.95) 75%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 8px);
+      color: var(--ink-black);
+      font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 12px 50px;
+      overflow-x: hidden;
+    }
+
+    /* Üst Kontrol Çubuğu (Tarih Seçici, İleri/Geri, Şehir, Yaprak Kopar) */
+    .control-bar {
+      width: 100%;
+      max-width: 820px;
+      background: linear-gradient(180deg, #3b2d22 0%, #261c14 100%);
+      border: 1px solid #634b35;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      color: #f3e9d2;
+      z-index: 20;
+    }
+
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-nostalgic {
+      background: #f3e9d2;
+      color: var(--ink-black);
+      border: 1px solid #8c7355;
+      border-bottom: 3px solid #6e563b;
+      padding: 6px 12px;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .btn-nostalgic:hover {
+      background: #fff8e7;
+      transform: translateY(-1px);
+    }
+
+    .btn-nostalgic:active {
+      transform: translateY(1px);
+      border-bottom-width: 1px;
+    }
+
+    .btn-tear {
+      background: linear-gradient(180deg, #c9241e 0%, #961612 100%);
+      color: #fff8ea;
+      border: 1px solid #e0534e;
+      border-bottom: 3px solid #5e0b08;
+      box-shadow: 0 2px 8px rgba(181, 29, 24, 0.4);
+    }
+
+    .btn-tear:hover {
+      background: linear-gradient(180deg, #db2b25 0%, #a81914 100%);
+      color: #ffffff;
+    }
+
+    .input-nostalgic {
+      background: #f3e9d2;
+      color: var(--ink-black);
+      border: 1px solid #8c7355;
+      border-radius: 5px;
+      padding: 5px 9px;
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Takvim Askı Kütüğü (Üst Karton & Metal Başlık) */
+    .calendar-mount {
+      width: 100%;
+      max-width: 820px;
+      position: relative;
+      perspective: 1800px;
+    }
+
+    .wooden-backboard-top {
+      background: linear-gradient(180deg, #7c1310 0%, #4f0a08 100%);
+      border: 3px solid #b58c46;
+      border-bottom: 5px solid #2b0605;
+      border-radius: 16px 16px 4px 4px;
+      padding: 12px 20px 18px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      z-index: 5;
+    }
+
+    .hanging-ring {
+      width: 34px;
+      height: 18px;
+      border: 4px solid #c9a35e;
+      border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      margin: -26px auto 8px;
+      background: transparent;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
+    }
+
+    .metal-staple {
+      position: absolute;
+      bottom: 5px;
+      width: 36px;
+      height: 8px;
+      background: linear-gradient(90deg, #8c8c8c, #e0e0e0, #6e6e6e);
+      border: 1px solid #333;
+      border-radius: 2px;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.6);
+    }
+
+    .metal-staple.left { left: 22%; }
+    .metal-staple.right { right: 22%; }
+
+    .mount-title {
+      font-family: 'Cinzel Decorative', 'Playfair Display', serif;
+      color: #f7e6c4;
+      font-size: 1.05rem;
+      letter-spacing: 3px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      font-weight: 700;
+    }
+
+    /* Arkadaki Yedek Yaprak Katmanı (Yaprak koparken alttan görünen yaprak hissi) */
+    .calendar-stack {
+      position: relative;
+      background: #dfd0b2;
+      border-radius: 0 0 6px 6px;
+      box-shadow:
+        0 3px 0 #d4c3a1,
+        0 6px 0 #c7b491,
+        0 9px 0 #baa580,
+        0 12px 0 #ad9670,
+        var(--shadow-deep);
+    }
+
+    /* Tırtıklı Koparma Çizgisi */
+    .perforation-line {
+      height: 10px;
+      width: 100%;
+      background:
+        radial-gradient(circle at 6px 0px, #3b0807 4px, transparent 5px) repeat-x;
+      background-size: 14px 10px;
+      border-bottom: 1px dashed rgba(60, 40, 20, 0.45);
+      position: relative;
+      z-index: 4;
+    }
+
+    /* Ana Takvim Yaprağı */
+    .calendar-sheet {
+      background-color: var(--paper-bg);
+      background-image:
+        radial-gradient(ellipse at center, rgba(255, 251, 240, 0.5) 0%, rgba(215, 192, 150, 0.45) 100%),
+        repeating-linear-gradient(0deg, rgba(120, 90, 50, 0.025) 0px, rgba(120, 90, 50, 0.025) 1px, transparent 1px, transparent 3px),
+        repeating-linear-gradient(90deg, rgba(120, 90, 50, 0.02) 0px, rgba(120, 90, 50, 0.02) 1px, transparent 1px, transparent 4px);
+      padding: 16px 20px 24px;
+      position: relative;
+      transform-origin: top center;
+      transition: transform 0.25s ease;
+      overflow: hidden;
+    }
+
+    /* Sağ üst köşe "Yaprak Kopar" kıvrımı */
+    .corner-peel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(225deg, #4b3828 0%, #4b3828 46%, #d4be94 50%, #efe3c8 62%, rgba(243,233,210,0) 70%);
+      box-shadow: -3px 3px 8px rgba(0,0,0,0.22);
+      cursor: pointer;
+      z-index: 10;
+      transition: width 0.25s ease, height 0.25s ease;
+    }
+
+    .corner-peel:hover {
+      width: 72px;
+      height: 72px;
+    }
+
+    .corner-peel::after {
+      content: "KOPAR";
+      position: absolute;
+      top: 10px;
+      right: 4px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: var(--maarif-red);
+      transform: rotate(45deg);
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
+
+    /* Yaprak Koparma Animasyonu */
+    @keyframes tearOffSheet {
+      0% {
+        transform: rotate(0deg) translateY(0) scale(1);
+        opacity: 1;
+      }
+      25% {
+        transform: rotate(-3deg) translateY(12px) skewX(2deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-115%) rotate(-14deg) skewX(10deg) scale(0.92);
+        opacity: 0;
+      }
+    }
+
+    @keyframes freshSheetAppear {
+      0% {
+        filter: brightness(0.92) sepia(0.18);
+        transform: scale(0.992);
+      }
+      100% {
+        filter: brightness(1) sepia(0);
+        transform: scale(1);
+      }
+    }
+
+    .calendar-sheet.tearing {
+      animation: tearOffSheet 0.68s cubic-bezier(0.55, 0.05, 0.67, 0.19) forwards;
+      pointer-events: none;
+    }
+
+    .calendar-sheet.fresh {
+      animation: freshSheetAppear 0.35s ease-out forwards;
+    }
+
+    /* Dış Çerçeve (Geleneksel Çift Çizgili ve Köşe Motifli) */
+    .outer-frame {
+      border: 3px double var(--ink-black);
+      outline: 1px solid var(--maarif-red);
+      outline-offset: -6px;
+      padding: 14px;
+      position: relative;
+    }
+
+    /* Ana Başlık Bandı */
+    .masthead {
+      text-align: center;
+      border-bottom: 3px double var(--ink-black);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .masthead-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      border-bottom: 1px solid var(--ink-black);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .masthead-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.6rem, 4.2vw, 2.55rem);
+      font-weight: 900;
+      color: var(--maarif-red);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      line-height: 1.05;
+      text-shadow: 1px 1px 0px rgba(30,25,22,0.18);
+    }
+
+    /* Üst Takvim Kuşağı: Hicri | Miladi Yıl & Gün Sayısı | Rumi */
+    .calendar-eras-strip {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      border-bottom: 2px solid var(--ink-black);
+      margin-bottom: 12px;
+      background: rgba(181, 29, 24, 0.05);
+    }
+
+    .era-box {
+      padding: 6px 10px;
+      text-align: center;
+      border-right: 1px solid var(--ink-black);
+    }
+
+    .era-box:last-child {
+      border-right: none;
+    }
+
+    .era-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--maarif-red);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+    }
+
+    .era-value {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--ink-black);
+    }
+
+    /* Orta Vitrin: Sol Sütun (Halk Takvimi & Güneş/Burç) - Orta (Saat & Büyük Gün Rakamı) - Sağ Sütun (Hicri/Rumi/Kasım-Hızır Detay) */
+    .centerpiece-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-bottom: 12px;
+      border-bottom: 3px double var(--ink-black);
+      padding-bottom: 12px;
+    }
+
+    .side-panel {
+      border: 1.5px solid var(--ink-black);
+      background: rgba(255, 250, 238, 0.45);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .panel-heading {
+      background: var(--maarif-red);
+      color: #fbf3e4;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 3px 6px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin: -10px -10px 8px -10px;
+      border-bottom: 1.5px solid var(--ink-black);
+    }
+
+    .info-list {
+      list-style: none;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    .info-list li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted rgba(30,25,22,0.35);
+      padding: 3px 0;
+    }
+
+    .info-list li:last-child {
+      border-bottom: none;
+    }
+
+    .info-list strong {
+      color: var(--maarif-red-dark);
+    }
+
+    .folk-badge {
+      margin-top: 8px;
+      background: rgba(181, 29, 24, 0.09);
+      border: 1px dashed var(--maarif-red);
+      padding: 6px 8px;
+      text-align: center;
+      font-size: 0.92rem;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--ink-black);
+    }
+
+    /* Orta Saat ve Büyük Rakam Kutusu */
+    .center-hero {
+      border: 2px solid var(--ink-black);
+      padding: 10px 12px;
+      text-align: center;
+      background: radial-gradient(circle, rgba(255,252,242,0.9) 0%, rgba(240,226,196,0.7) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .month-banner {
+      width: 100%;
+      background: var(--ink-black);
+      color: var(--paper-bg);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 3px 0;
+      margin-bottom: 6px;
+    }
+
+    /* Ortadaki Geleneksel Saat Çizimi */
+    .clock-illustration-wrap {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      margin: 2px auto 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    }
+
+    .giant-day-number {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(3.4rem, 7vw, 4.7rem);
+      font-weight: 900;
+      line-height: 0.95;
+      color: var(--maarif-red);
+      text-shadow: 2px 2px 0px var(--ink-black);
+      margin: 4px 0 2px;
+    }
+
+    .day-name-banner {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--ink-black);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-top: 2px solid var(--maarif-red);
+      border-bottom: 2px solid var(--maarif-red);
+      width: 100%;
+      padding: 2px 0;
+      margin-top: 4px;
+    }
+
+    /* Namaz Vakitleri Tablosu */
+    .prayer-section {
+      border: 2px solid var(--ink-black);
+      margin-bottom: 12px;
+      background: rgba(255, 252, 244, 0.6);
+    }
+
+    .prayer-header {
+      background: var(--ink-black);
+      color: var(--paper-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .prayer-header span.red-highlight {
+      color: #ff857f;
+    }
+
+    .prayer-times-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      text-align: center;
+    }
+
+    .prayer-cell {
+      padding: 7px 4px;
+      border-right: 1px solid var(--ink-black);
+    }
+
+    .prayer-cell:last-child {
+      border-right: none;
+    }
+
+    .prayer-name {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--maarif-red);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .prayer-time {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--ink-black);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Günün Ayeti ve Vecizesi Kuşağı */
+    .quote-verse-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .ornate-box {
+      border: 1.5px solid var(--ink-black);
+      padding: 10px 12px;
+      background: rgba(255, 250, 238, 0.5);
+      position: relative;
+    }
+
+    .ornate-box-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--maarif-red);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--maarif-red);
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ornate-quote-text {
+      font-size: 1.02rem;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--ink-black);
+    }
+
+    .ornate-quote-source {
+      display: block;
+      text-align: right;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      margin-top: 5px;
+      font-style: normal;
+    }
+
+    /* Tarihte Bugün Bölümü */
+    .history-section {
+      border: 1.5px solid var(--ink-black);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      background: rgba(255, 252, 245, 0.55);
+    }
+
+    .history-list {
+      list-style: none;
+      font-size: 0.97rem;
+      line-height: 1.48;
+    }
+
+    .history-list li {
+      padding: 3px 0;
+      border-bottom: 1px dashed rgba(30, 25, 22, 0.25);
+    }
+
+    .history-list li:last-child {
+      border-bottom: none;
+    }
+
+    .history-year {
+      font-weight: 800;
+      color: var(--maarif-red);
+      margin-right: 6px;
+    }
+
+    /* Arka Yaprak / Kültür-Edebiyat-Mutfak Ayırıcı Başlığı */
+    .back-page-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 14px 0 12px;
+    }
+
+    .back-page-divider::before,
+    .back-page-divider::after {
+      content: "";
+      flex: 1;
+      border-top: 2px double var(--maarif-red);
+    }
+
+    .back-page-divider span {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--maarif-red);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 2px 10px;
+      border: 1px solid var(--maarif-red);
+      background: var(--paper-bg);
+    }
+
+    /* Kültür ve Edebiyat 3'lü Grid (Osmanlıca Lügatçe, Günün Deyimi, Mani & Bilmece) */
+    .cultural-grid-top {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .ottoman-arabic {
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: 1.65rem;
+      color: var(--maarif-red-dark);
+      text-align: center;
+      margin: 2px 0 4px;
+      line-height: 1.2;
+      direction: rtl;
+    }
+
+    .ottoman-word-title {
+      font-weight: 800;
+      font-size: 1.08rem;
+      color: var(--ink-black);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .mani-poem {
+      text-align: center;
+      font-style: italic;
+      font-size: 0.98rem;
+      line-height: 1.42;
+      padding: 4px 0;
+    }
+
+    .riddle-box {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--ink-black);
+      text-align: center;
+    }
+
+    .riddle-question {
+      font-weight: 600;
+      font-size: 0.94rem;
+      margin-bottom: 5px;
+    }
+
+    .riddle-answer-btn {
+      background: transparent;
+      border: 1px solid var(--maarif-red);
+      color: var(--maarif-red);
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .riddle-answer-btn:hover {
+      background: var(--maarif-red);
+      color: #fff;
+    }
+
+    /* Alt 2'li Grid: Günün Fıkrası & Pratik Bilgiler */
+    .cultural-grid-middle {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .joke-text {
+      font-size: 0.97rem;
+      line-height: 1.48;
+      text-align: justify;
+    }
+
+    /* En Alt Kuşak: Günün Menüsü (Yemeği) & Çocuğunuza İsim Önerileri */
+    .bottom-strip-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 12px;
+    }
+
+    .menu-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .menu-pill {
+      background: rgba(181, 29, 24, 0.1);
+      border: 1px solid rgba(181, 29, 24, 0.4);
+      padding: 2px 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 3px;
+    }
+
+    .names-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .name-card {
+      background: rgba(30, 25, 22, 0.04);
+      border: 1px dotted var(--ink-black);
+      padding: 6px 8px;
+    }
+
+    .name-card strong {
+      color: var(--maarif-red);
+      display: block;
+      font-size: 0.98rem;
+    }
+
+    .name-card span {
+      font-size: 0.86rem;
+      line-height: 1.3;
+      display: block;
+    }
+
+    /* Yaprak Altbilgisi */
+    .sheet-footer {
+      margin-top: 12px;
+      padding-top: 6px;
+      border-top: 2px solid var(--ink-black);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+    }
+
+    /* Mobil Uyumluluk */
+    @media (max-width: 760px) {
+      .centerpiece-grid {
+        grid-template-columns: 1fr;
+      }
+      .center-hero {
+        order: -1;
+      }
+      .prayer-times-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .prayer-cell:nth-child(3) {
+        border-right: none;
+      }
+      .prayer-cell:nth-child(-n+3) {
+        border-bottom: 1px solid var(--ink-black);
+      }
+      .quote-verse-strip,
+      .cultural-grid-top,
+      .cultural-grid-middle,
+      .bottom-strip-grid {
+        grid-template-columns: 1fr;
+      }
+      .calendar-eras-strip {
+        grid-template-columns: 1fr;
+      }
+      .era-box {
+        border-right: none;
+        border-bottom: 1px solid var(--ink-black);
+      }
+      .era-box:last-child {
+        border-bottom: none;
+      }
+      .control-bar {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ÜST KONTROL ÇUBUĞU: Geçmiş/Gelecek Tarih Gezgini, Şehir Seçimi ve Yaprak Koparma -->
+  <header class="control-bar" aria-label="Takvim Kontrolleri">
+    <div class="nav-group">
+      <button type="button" class="btn-nostalgic" id="btnPrevDay" title="Önceki Gün (Sol Ok)">
+        &#9664; Önceki Gün
+      </button>
+      <input type="date" id="datePicker" class="input-nostalgic" aria-label="Tarih Seçin" />
+      <button type="button" class="btn-nostalgic" id="btnToday" title="Bugünün Gerçek Tarihine Dön">
+        Bugün
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <label for="citySelect" style="font-size:0.9rem; font-weight:600;">Vakit Şehri:</label>
+      <select id="citySelect" class="input-nostalgic" aria-label="Namaz Vakitleri İçin Şehir Seçimi">
+        <option value="istanbul">İstanbul</option>
+        <option value="ankara">Ankara</option>
+        <option value="izmir">İzmir</option>
+        <option value="bursa">Bursa</option>
+        <option value="konya">Konya</option>
+        <option value="antalya">Antalya</option>
+        <option value="adana">Adana</option>
+        <option value="trabzon">Trabzon</option>
+        <option value="erzurum">Erzurum</option>
+        <option value="diyarbakir">Diyarbakır</option>
+      </select>
+
+      <button type="button" class="btn-nostalgic btn-tear" id="btnTearSheet" title="Yaprağı Kopar ve Yarına Geç (Sağ Ok)">
+        &#9986; Yaprak Kopar (Yarın &#9654;)
+      </button>
+    </div>
+  </header>
+
+  <!-- TAKVİM ASKI KÜTÜĞÜ VE YAPRAK YIĞINI -->
+  <main class="calendar-mount">
+    <div class="wooden-backboard-top">
+      <div class="hanging-ring"></div>
+      <div class="mount-title">SAATLİ MAARİF TAKVİMİ</div>
+      <div class="metal-staple left"></div>
+      <div class="metal-staple right"></div>
+    </div>
+
+    <div class="calendar-stack">
+      <div class="perforation-line"></div>
+
+      <!-- ANA TAKVİM YAPRAĞI -->
+      <article class="calendar-sheet" id="calendarSheet">
+        <!-- Sağ Üst Köşe Kıvrımı (Tıklanınca yaprak koparır) -->
+        <div class="corner-peel" id="cornerPeel" title="Yaprağı koparmak için tıklayın"></div>
+
+        <div class="outer-frame">
+          <!-- Üst Başlık -->
+          <div class="masthead">
+            <div class="masthead-sub">
+              <span id="dayOfYearInfo">Yılın 303. Günü • Kalan: 62</span>
+              <span>HER GÜN BİR YAPRAK • FAYDALI BİLGİLER HAZİNESİ</span>
+              <span id="seasonBadge">SONBAHAR MEVSİMİ</span>
+            </div>
+            <h1 class="masthead-title">SAATLİ MAARİF TAKVİMİ</h1>
+          </div>
+
+          <!-- 3'lü Takvim Kuşağı: Hicri - Miladi - Rumi -->
+          <div class="calendar-eras-strip">
+            <div class="era-box">
+              <span class="era-label">HİCRÎ KAMERÎ</span>
+              <span class="era-value" id="hijriDateText">19 Cemâziyelevvel 1448</span>
+            </div>
+            <div class="era-box">
+              <span class="era-label">MİLÂDÎ SENE</span>
+              <span class="era-value" id="gregorianFullText">30 Ekim 2026</span>
+            </div>
+            <div class="era-box">
+              <span class="era-label">RÛMÎ TAKVİM</span>
+              <span class="era-value" id="rumiDateText">17 Teşrin-i Evvel 1442</span>
+            </div>
+          </div>
+
+          <!-- ORTA VİTRİN: Sol (Halk Takvimi & Astronomi) - Orta (Saat & Gün Rakamı) - Sağ (Takvim & Mevsim Bilgileri) -->
+          <div class="centerpiece-grid">
+            <!-- Sol Sütun -->
+            <div class="side-panel">
+              <div>
+                <div class="panel-heading">Gök &amp; Halk Takvimi</div>
+                <ul class="info-list">
+                  <li><span>Hızır / Kasım:</span> <strong id="hizirKasimText">Hızır: 178. Gün</strong></li>
+                  <li><span>Güneş Burcu:</span> <strong id="zodiacText">Akrep</strong></li>
+                  <li><span>Ayın Hâli:</span> <strong id="moonPhaseText">Dolunay Sonrası</strong></li>
+                  <li><span>Gündüz Süresi:</span> <strong id="daylightDurationText">10 s 28 dk</strong></li>
+                </ul>
+              </div>
+              <div class="folk-badge" id="folkCalendarNote">
+                "Kestane Karası Fırtınası ve Yaprak Dökümü Zamanı"
+              </div>
+            </div>
+
+            <!-- Orta Sütun: Ay Adı + Geleneksel Saat Çizimi + Büyük Gün Rakamı + Gün Adı -->
+            <div class="center-hero">
+              <div class="month-banner" id="monthBanner">EKİM 2026</div>
+
+              <!-- Geleneksel Maarif Gravürlü ve Canlı Akrep/Yelkovanlı Saat Çizimi -->
+              <div class="clock-illustration-wrap" title="Canlı Sistem Saati">
+                <svg class="clock-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Dış Güneş Şuaları / Nostaljik Rozet Çerçeve -->
+                  <circle cx="100" cy="100" r="94" fill="#f7eed7" stroke="#1e1916" stroke-width="3"/>
+                  <circle cx="100" cy="100" r="88" fill="none" stroke="#b51d18" stroke-width="1.5" stroke-dasharray="4 2"/>
+                  <circle cx="100" cy="100" r="82" fill="#fbf5e6" stroke="#1e1916" stroke-width="2"/>
+
+                  <!-- Kadran İçi Geleneksel Silüet (Cami Kubbesi, Minare ve Güneş Şuaları) -->
+                  <g opacity="0.16" fill="#b51d18">
+                    <path d="M55 135 Q100 85 145 135 Z" />
+                    <rect x="46" y="78" width="5" height="57" />
+                    <polygon points="48.5,66 44,78 53,78" />
+                    <rect x="149" y="78" width="5" height="57" />
+                    <polygon points="151.5,66 147,78 156,78" />
+                  </g>
+
+                  <!-- Dakika Çizgileri ve Saat Rakamları -->
+                  <g stroke="#1e1916">
+                    <line x1="100" y1="20" x2="100" y2="27" stroke-width="2.5"/>
+                    <line x1="180" y1="100" x2="173" y2="100" stroke-width="2.5"/>
+                    <line x1="100" y1="180" x2="100" y2="173" stroke-width="2.5"/>
+                    <line x1="20" y1="100" x2="27" y2="100" stroke-width="2.5"/>
+                    <!-- Ara saat işaretleri -->
+                    <line x1="140" y1="30.7" x2="136.5" y2="36.8" stroke-width="1.8"/>
+                    <line x1="169.3" y1="60" x2="163.2" y2="63.5" stroke-width="1.8"/>
+                    <line x1="169.3" y1="140" x2="163.2" y2="136.5" stroke-width="1.8"/>
+                    <line x1="140" y1="169.3" x2="136.5" y2="163.2" stroke-width="1.8"/>
+                    <line x1="60" y1="169.3" x2="63.5" y2="163.2" stroke-width="1.8"/>
+                    <line x1="30.7" y1="140" x2="36.8" y2="136.5" stroke-width="1.8"/>
+                    <line x1="30.7" y1="60" x2="36.8" y2="63.5" stroke-width="1.8"/>
+                    <line x1="60" y1="30.7" x2="63.5" y2="36.8" stroke-width="1.8"/>
+                  </g>
+
+                  <!-- Klasik Romen / Saat Rakamları -->
+                  <g font-family="Playfair Display, serif" font-weight="800" font-size="14" fill="#1e1916" text-anchor="middle">
+                    <text x="100" y="41">12</text>
+                    <text x="131" y="49">1</text>
+                    <text x="153" y="71">2</text>
+                    <text x="162" y="105">3</text>
+                    <text x="153" y="138">4</text>
+                    <text x="131" y="160">5</text>
+                    <text x="100" y="168">6</text>
+                    <text x="69" y="160">7</text>
+                    <text x="47" y="138">8</text>
+                    <text x="38" y="105">9</text>
+                    <text x="49" y="71">10</text>
+                    <text x="70" y="49">11</text>
+                  </g>
+
+                  <text x="100" y="74" font-family="EB Garamond, serif" font-size="9.5" font-weight="700" fill="#b51d18" text-anchor="middle" letter-spacing="1">MAARİF</text>
+                  <text x="100" y="132" font-family="EB Garamond, serif" font-size="8.5" font-weight="700" fill="#4a4039" text-anchor="middle" id="digitalClockText">12:00</text>
+
+                  <!-- Akrep, Yelkovan ve Saniye İbresi -->
+                  <line id="hourHand" x1="100" y1="100" x2="100" y2="56" stroke="#1e1916" stroke-width="4.5" stroke-linecap="round" />
+                  <line id="minuteHand" x1="100" y1="100" x2="100" y2="38" stroke="#1e1916" stroke-width="3" stroke-linecap="round" />
+                  <line id="secondHand" x1="100" y1="110" x2="100" y2="34" stroke="#b51d18" stroke-width="1.5" stroke-linecap="round" />
+                  <circle cx="100" cy="100" r="5" fill="#b51d18" stroke="#1e1916" stroke-width="1.5"/>
+                </svg>
+              </div>
+
+              <div class="giant-day-number" id="dayNumberGiant">30</div>
+              <div class="day-name-banner" id="dayNameBanner">CUMA</div>
+            </div>
+
+            <!-- Sağ Sütun -->
+            <div class="side-panel">
+              <div>
+                <div class="panel-heading">Vakit &amp; Takvim Özeti</div>
+                <ul class="info-list">
+                  <li><span>Ezânî Saat:</span> <strong id="ezaniNoteText">Akşam 12:00</strong></li>
+                  <li><span>Kıble Saati:</span> <strong id="qiblaTimeText">11:52</strong></li>
+                  <li><span>Şehir Rakımı:</span> <strong id="cityCoordText">İstanbul (41°K)</strong></li>
+                  <li><span>Eşref Saati:</span> <strong id="auspiciousTimeText">Kuşluk Vakti</strong></li>
+                </ul>
+              </div>
+              <div class="folk-badge" id="seasonalProverbBox">
+                "Ekim eken, biçim biçer; vakti gözeten murada erer."
+              </div>
+            </div>
+          </div>
+
+          <!-- NAMAZ VAKİTLERİ TABLOSU -->
+          <section class="prayer-section" aria-label="Namaz Vakitleri">
+            <div class="prayer-header">
+              <span id="prayerCityTitle">İSTANBUL İÇİN NAMAZ VAKİTLERİ</span>
+              <span class="red-highlight">GÜNEŞ TAKVİMİ HESABI</span>
+            </div>
+            <div class="prayer-times-grid">
+              <div class="prayer-cell">
+                <span class="prayer-name">İmsak</span>
+                <span class="prayer-time" id="timeImsak">05:54</span>
+              </div>
+              <div class="prayer-cell">
+                <span class="prayer-name">Güneş</span>
+                <span class="prayer-time" id="timeGunes">07:20</span>
+              </div>
+              <div class="prayer-cell">
+                <span class="prayer-name">Öğle</span>
+                <span class="prayer-time" id="timeOgle">12:56</span>
+              </div>
+              <div class="prayer-cell">
+                <span class="prayer-name">İkindi</span>
+                <span class="prayer-time" id="timeIkindi">15:46</span>
+              </div>
+              <div class="prayer-cell">
+                <span class="prayer-name">Akşam</span>
+                <span class="prayer-time" id="timeAksam">18:12</span>
+              </div>
+              <div class="prayer-cell">
+                <span class="prayer-name">Yatsı</span>
+                <span class="prayer-time" id="timeYatsi">19:33</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- GÜNÜN AYETİ VE GÜNÜN SÖZÜ (VECİZE) -->
+          <div class="quote-verse-strip">
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Âyet-i Kerîmesi</span>
+                <span>&#10022;</span>
+              </div>
+              <p class="ornate-quote-text" id="dailyVerseText"></p>
+              <span class="ornate-quote-source" id="dailyVerseSource"></span>
+            </div>
+
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Sözü (Vecize)</span>
+                <span>&#10086;</span>
+              </div>
+              <p class="ornate-quote-text" id="dailyQuoteText"></p>
+              <span class="ornate-quote-source" id="dailyQuoteAuthor"></span>
+            </div>
+          </div>
+
+          <!-- TARİHTE BUGÜN -->
+          <section class="history-section">
+            <div class="ornate-box-title">
+              <span>Tarihte Bugün Meydana Gelen Hadiseler</span>
+              <span id="historyDateBadge">30 Ekim</span>
+            </div>
+            <ul class="history-list" id="historyList"></ul>
+          </section>
+
+          <!-- ARKA YAPRAK KÜLTÜR, LÜGATÇE, EDEBİYAT VE MUTFAK KÖŞESİ -->
+          <div class="back-page-divider">
+            <span>Yaprağın Arka Yüzü • Kültür, Lügat, Mizah ve Ev İdaresi</span>
+          </div>
+
+          <!-- 3'lü Kültür Kuşağı: Osmanlıca Kelime | Günün Deyimi | Mani ve Bilmece -->
+          <div class="cultural-grid-top">
+            <!-- Osmanlıca Kelime -->
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Osmanlıca Lügatçe</span>
+                <span>&#9770;</span>
+              </div>
+              <div class="ottoman-arabic" id="ottomanScript">مروّت</div>
+              <div class="ottoman-word-title" id="ottomanWord">Mürüvvet</div>
+              <p style="font-size:0.93rem; text-align:center; line-height:1.4;" id="ottomanMeaning"></p>
+            </div>
+
+            <!-- Günün Deyimi -->
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Deyimi</span>
+                <span>&#10077;</span>
+              </div>
+              <div style="font-weight:800; font-size:1.05rem; color:var(--maarif-red-dark); margin-bottom:5px;" id="idiomTitle"></div>
+              <p style="font-size:0.94rem; line-height:1.45;" id="idiomMeaning"></p>
+            </div>
+
+            <!-- Günün Manisi & Bilmecesi -->
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Manisi &amp; Bilmecesi</span>
+                <span>&#9830;</span>
+              </div>
+              <div class="mani-poem" id="dailyMani"></div>
+              <div class="riddle-box">
+                <div class="riddle-question" id="riddleQuestion"></div>
+                <button type="button" class="riddle-answer-btn" id="riddleToggleBtn">Cevabı Göster</button>
+                <div id="riddleAnswer" style="display:none; font-weight:800; color:var(--maarif-red); margin-top:4px; font-size:0.95rem;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Orta 2'li: Günün Fıkrası ve Pratik Bilgi -->
+          <div class="cultural-grid-middle">
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Fıkrası (Tebessüm Köşesi)</span>
+                <span id="jokeTitleBadge">Nasreddin Hoca</span>
+              </div>
+              <p class="joke-text" id="dailyJokeText"></p>
+            </div>
+
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Faydalı ve Pratik Bilgiler</span>
+                <span>&#9883;</span>
+              </div>
+              <div style="font-weight:800; font-size:1rem; color:var(--maarif-red-dark); margin-bottom:5px;" id="practicalTitle"></div>
+              <p style="font-size:0.94rem; line-height:1.46;" id="practicalText"></p>
+            </div>
+          </div>
+
+          <!-- Alt 2'li: Günün Yemeği (Menüsü) & Çocuğunuza İsim Önerileri -->
+          <div class="bottom-strip-grid">
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Günün Yemeği &amp; Sofrası</span>
+                <span>&#9832;</span>
+              </div>
+              <div class="menu-items" id="menuPills"></div>
+              <p style="font-size:0.92rem; line-height:1.42; color:var(--ink-muted);" id="menuRecipeTip"></p>
+            </div>
+
+            <div class="ornate-box">
+              <div class="ornate-box-title">
+                <span>Çocuğunuza İsim Önerileri</span>
+                <span>&#10023;</span>
+              </div>
+              <div class="names-pair">
+                <div class="name-card">
+                  <strong id="girlNameTitle">Kız: Zülal</strong>
+                  <span id="girlNameMeaning">Berrak, saf, tatlı ve soğuk su.</span>
+                </div>
+                <div class="name-card">
+                  <strong id="boyNameTitle">Erkek: Kerem</strong>
+                  <span id="boyNameMeaning">Cömertlik, asalet, eli açıklık.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Yaprak Altbilgisi -->
+          <footer class="sheet-footer">
+            <span>Maarif Matbaası Geleneksel Tertibi</span>
+            <span id="footerSerialNo">Yaprak No: 2026 / 303</span>
+            <span>"Vakit nakittir, geçen gün geri gelmez."</span>
+          </footer>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    /*************************************************************************
+     * SAATLİ MAARİF TAKVİMİ - ZENGİN VERİ HAVUZU VE ASTRONOMİK/TAKVİM MOTORU
+     *************************************************************************/
+
+    const MONTHS_TR = [
+      "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+    ];
+
+    const DAYS_TR = [
+      "Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"
+    ];
+
+    const RUMI_MONTHS = [
+      "Kânûn-ı Sânî", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+      "Temmuz", "Ağustos", "Eylül", "Teşrîn-i Evvel", "Teşrîn-i Sânî", "Kânûn-ı Evvel"
+    ];
+
+    const HIJRI_MONTHS_TR = [
+      "Muharrem", "Safer", "Rebîülevvel", "Rebîülâhir",
+      "Cemâziyelevvel", "Cemâziyelâhir", "Receb", "Şâban",
+      "Ramazan", "Şevval", "Zilkade", "Zilhicce"
+    ];
+
+    // Türkiye Şehir Koordinatları (Astronomik Namaz Vakti Hesabı İçin)
+    const CITIES = {
+      istanbul:   { name: "İstanbul",   lat: 41.0082, lon: 28.9784, qibla: "11:52" },
+      ankara:     { name: "Ankara",     lat: 39.9334, lon: 32.8597, qibla: "11:39" },
+      izmir:      { name: "İzmir",      lat: 38.4237, lon: 27.1428, qibla: "12:04" },
+      bursa:      { name: "Bursa",      lat: 40.1885, lon: 29.0610, qibla: "11:53" },
+      konya:      { name: "Konya",      lat: 37.8746, lon: 32.4932, qibla: "11:44" },
+      antalya:    { name: "Antalya",    lat: 36.8969, lon: 30.7133, qibla: "11:53" },
+      adana:      { name: "Adana",      lat: 37.0000, lon: 35.3213, qibla: "11:32" },
+      trabzon:    { name: "Trabzon",    lat: 41.0027, lon: 39.7168, qibla: "11:09" },
+      erzurum:    { name: "Erzurum",    lat: 39.9043, lon: 41.2679, qibla: "11:03" },
+      diyarbakir: { name: "Diyarbakır", lat: 37.9144, lon: 40.2306, qibla: "11:10" }
+    };
+
+    // 1. GÜNÜN AYETLERİ HAVUZU
+    const VERSES = [
+      { text: "Şüphesiz güçlükle beraber bir kolaylık vardır. Gerçekten, güçlükle beraber bir kolaylık vardır.", source: "İnşirâh Sûresi, 5-6. Âyetler" },
+      { text: "Allah, hiç kimseye gücünün yeteceğinden başka yük yüklemez.", source: "Bakara Sûresi, 286. Âyet" },
+      { text: "Rabbinize alçak gönüllülükle ve için için dua edin.", source: "A'râf Sûresi, 55. Âyet" },
+      { text: "İyilikle kötülük bir olmaz. Sen kötülüğü en güzel olan davranışla sav.", source: "Fussilet Sûresi, 34. Âyet" },
+      { text: "Hiç bilenlerle bilmeyenler bir olur mu? Doğrusu ancak akıl sahipleri öğüt alır.", source: "Zümer Sûresi, 9. Âyet" },
+      { text: "Kalpler ancak Allah'ı anmakla huzur bulur.", source: "Ra'd Sûresi, 28. Âyet" },
+      { text: "Yeryüzünde yürüyen her canlının rızkı yalnızca Allah'ın üzerinedir.", source: "Hûd Sûresi, 6. Âyet" },
+      { text: "Kim zerre miktarı hayır yapmışsa onu görür.", source: "Zilzâl Sûresi, 7. Âyet" },
+      { text: "Ey iman edenler! Sabrederek ve namaz kılarak Allah'tan yardım dileyin.", source: "Bakara Sûresi, 153. Âyet" },
+      { text: "İnsan için ancak çalıştığının karşılığı vardır.", source: "Necm Sûresi, 39. Âyet" },
+      { text: "Şüphesiz Allah, adaleti, iyilik yapmayı ve yakınlara yardım etmeyi emreder.", source: "Nahl Sûresi, 90. Âyet" },
+      { text: "Affet, marufu (iyiliği) emret ve cahillerden yüz çevir.", source: "A'râf Sûresi, 199. Âyet" },
+      { text: "Yiyin, için fakat israf etmeyin. Çünkü Allah israf edenleri sevmez.", source: "A'râf Sûresi, 31. Âyet" },
+      { text: "Geceyi dinlenmeniz için, gündüzü de çalışıp rızık aramanız için aydınlık kılan O'dur.", source: "Yûnus Sûresi, 67. Âyet" },
+      { text: "Kullarıma söyle, sözün en güzelini söylesinler.", source: "İsrâ Sûresi, 53. Âyet" },
+      { text: "Göklerin ve yerin yaratılışında, gece ile gündüzün birbiri ardınca gelişinde akıl sahipleri için ibretler vardır.", source: "Âl-i İmrân Sûresi, 190. Âyet" }
+    ];
+
+    // 2. GÜNÜN SÖZÜ (VECİZELER) HAVUZU
+    const QUOTES = [
+      { text: "Hayatta en hakiki mürşit ilimdir, fendir.", author: "Gazi Mustafa Kemal Atatürk" },
+      { text: "Cömertlik ve yardım etmede akarsu gibi ol; şefkat ve merhamette güneş gibi ol.", author: "Hz. Mevlânâ Celâleddîn-i Rûmî" },
+      { text: "İlim ilim bilmektir, ilim kendin bilmektir; sen kendini bilmezsin, ya nice okumaktır.", author: "Yunus Emre" },
+      { text: "Büyük işler, mühim teşebbüsler ancak müşterek mesai ile kabil-i temindir.", author: "Mustafa Kemal Atatürk" },
+      { text: "Haksızlık karşısında eğilmeyiniz; çünkü hakkınızla beraber şerefinizi de kaybedersiniz.", author: "Hz. Ali (r.a.)" },
+      { text: "Kâmil odur ki koya dünyada bir eser, eseri olmayanın yerinde yeller eser.", author: "Şeyh Edebali" },
+      { text: "Sabır, boyun eğmek değil, mücadele etmektir.", author: "Hz. Ömer (r.a.)" },
+      { text: "Bir mıh bir nalı kurtarır, bir nal bir atı, bir at bir yiğidi, bir yiğit bir vatanı kurtarır.", author: "Cengiz Han / Türk Atasözü" },
+      { text: "Hüner bir şehir bünyâd etmektir; reâyâ kalbin âbâd etmektir.", author: "Yavuz Sultan Selim" },
+      { text: "İnsanı yaşat ki devlet yaşasın.", author: "Şeyh Edebali" },
+      { text: "Okunacak en büyük kitap insandır.", author: "Hacı Bektaş-ı Veli" },
+      { text: "Marifet iltifata tâbidir, müşterisiz meta zâyidir.", author: "Muallim Naci" },
+      { text: "Güzel gören güzel düşünür, güzel düşünen hayatından lezzet alır.", author: "Kelâm-ı Kibâr" },
+      { text: "Az konuşmak hikmet, az yemek sıhhat, az uyumak ibadettir.", author: "Lokman Hekim" },
+      { text: "Vatanını en çok seven, görevini en iyi yapandır.", author: "Mustafa Kemal Atatürk" },
+      { text: "Tatlı dil yılanı deliğinden çıkarır, kötü söz insanı dinden çıkarır.", author: "Atalar Sözü" }
+    ];
+
+    // 3. HALK TAKVİMİ MEVSİMSEL TAKVİM TABLOSU (Ay ve Güne göre eşleşir)
+    const FOLK_CALENDAR_EVENTS = [
+      { startM: 1, startD: 1, endM: 1, endD: 15, note: "Zemheri (erbain) soğuklarının hüküm sürdüğü, gecelerin yavaş yavaş kısalmaya başladığı günler." },
+      { startM: 1, startD: 16, endM: 1, endD: 31, note: "Zemheri sonu ve Hamsin (elli günlük kış) başlangıcı; şiddetli kış rüzgârları." },
+      { startM: 2, startD: 1, endM: 2, endD: 19, note: "Hamsin soğukları; ağaçlara su yürümesi arifesi." },
+      { startM: 2, startD: 20, endM: 2, endD: 26, note: "Birinci Cemre'nin havaya düşmesi (20 Şubat); baharın ilk müjdecisi." },
+      { startM: 2, startD: 27, endM: 3, endD: 5, note: "İkinci Cemre'nin suya düşmesi (27 Şubat); buzların çözülmeye başlaması." },
+      { startM: 3, startD: 6, endM: 3, endD: 10, note: "Üçüncü Cemre'nin toprağa düşmesi (6 Mart); toprağın uyanışı." },
+      { startM: 3, startD: 11, endM: 3, endD: 18, note: "Berdü'l-Acûz (Kocakarı Soğukları); kışın son sert vedası." },
+      { startM: 3, startD: 19, endM: 3, endD: 31, note: "Nevruz-i Sultânî (Gece ile gündüzün eşitlenmesi) ve leyleklerin gelişi." },
+      { startM: 4, startD: 1, endM: 4, endD: 17, note: "Bülbüllerin ötme vakti, çiçeklerin açması ve Kırlangıç Fırtınası." },
+      { startM: 4, startD: 18, endM: 4, endD: 30, note: "Sitte-i Sevr (Öküz Altısı) fırtınaları ve Abrul'un Beşi yağmurları." },
+      { startM: 5, startD: 1, endM: 5, endD: 15, note: "Hıdırellez (6 Mayıs) ile Hızır Günleri'nin başlaması; yaz mevsiminin müjdesi." },
+      { startM: 5, startD: 16, endM: 5, endD: 31, note: "Filizkıran Fırtınası, Ülker Fırtınası ve güllerin goncalanma zamanı." },
+      { startM: 6, startD: 1, endM: 6, endD: 20, note: "Hasat ve harman mevsiminin başlangıcı; ekinlerin sararması." },
+      { startM: 6, startD: 21, endM: 6, endD: 30, note: "Gün Dönümü Fırtınası (En uzun gündüz) ve yaprak aşısı zamanı." },
+      { startM: 7, startD: 1, endM: 7, endD: 22, note: "Çarkdönümü Fırtınası ve üzümlerin alaca düşme vakti." },
+      { startM: 7, startD: 23, endM: 8, endD: 10, note: "Eyyâm-ı Bâhur (En şiddetli yaz sıcakları) ve Sam Yelleri." },
+      { startM: 8, startD: 11, endM: 8, endD: 31, note: "Başakların biçilmesi, leyleklerin göç hazırlığı ve Mihrican rüzgârları." },
+      { startM: 9, startD: 1, endM: 9, endD: 21, note: "Bağ bozumu, pekmez kaynatma ve bıldırcın geçimi fırtınası." },
+      { startM: 9, startD: 22, endM: 9, endD: 30, note: "Sonbahar Ekinoksu (Gece-gündüz eşitliği) ve Kestane Karası Fırtınası." },
+      { startM: 10, startD: 1, endM: 10, endD: 18, note: "Turna Geçimi, Meryem Ana Fırtınası ve kışlık ekinlerin ekimi." },
+      { startM: 10, startD: 19, endM: 10, endD: 31, note: "Bağ Bozumu Fırtınası, Balık Fırtınası ve ağaçların yaprak dökümü." },
+      { startM: 11, startD: 1, endM: 11, endD: 15, note: "Kasım Günleri'nin başlaması (8 Kasım) ve Pastırma Yazı'nın ılık günleri." },
+      { startM: 11, startD: 16, endM: 11, endD: 30, note: "Koç Katımı Fırtınası ve Ülker Dönümü; suların soğuması." },
+      { startM: 12, startD: 1, endM: 12, endD: 20, note: "Karakış Fırtınası ve rüzgârların poyraza dönmesi." },
+      { startM: 12, startD: 21, endM: 12, endD: 31, note: "Şeb-i Yeldâ (Yılın en uzun gecesi - 21 Aralık) ve Erbain (Zemheri) başlangıcı." }
+    ];
+
+    // 4. OSMANLICA KELİMELER (LÜGATÇE)
+    const OTTOMAN_WORDS = [
+      { script: "مروّت", word: "Mürüvvet", meaning: "İyilikseverlik, cömertlik, mertlik; aile içinde evlatların güzel günlerini görme sevinci." },
+      { script: "استغنا", word: "İstiğnâ", meaning: "Eldekiyle yetinip tok gözlü olma, kimseye minnet etmeme, gönül zenginliği." },
+      { script: "فرست", word: "Ferâset", meaning: "Anlayışlılık, sezgi gücü, bir işin ilerisini ve iç yüzünü hemen kavrayabilme kabiliyeti." },
+      { script: "تواضع", word: "Tevâzu", meaning: "Alçakgönüllülük, kibir ve gösterişten uzak durup haddini bilme erdemi." },
+      { script: "شفقت", word: "Şefkat", meaning: "Karşılık beklemeden duyulan içten sevgi, koruyucu ve sarıp sarmalayıcı merhamet." },
+      { script: "بصيرت", word: "Basîret", meaning: "Kalp gözüyle görme, hakikati sezme, uzağı ve doğruyu fark etme yetisi." },
+      { script: "وفا", word: "Vefâ", meaning: "Sözünde durma, dostluğu ve yapılan iyiliği hiçbir zaman unutmama bağlılığı." },
+      { script: "لطافت", word: "Letâfet", meaning: "Hoşluk, incelik, nezaket, gönle ferahlık veren zarif güzellik." },
+      { script: "حميّت", word: "Hamiyyet", meaning: "Vatanını, milletini, ailesini ve mukaddes değerlerini koruma gayreti, onur." },
+      { script: "قناعت", word: "Kanâat", meaning: "Kısmetine razı olma, hırs göstermeden huzur içinde şükrederek yaşama hali." },
+      { script: "مؤنس", word: "Mûnis", meaning: "Cana yakın, sevimli, kendisiyle kolayca ünsiyet ve dostluk kurulan kimse." },
+      { script: "سكونت", word: "Sükûnet", meaning: "Durgunluk, dinginlik, gönül huzuru ve telaşsız ağırbaşlılık." },
+      { script: "حكمت", word: "Hikmet", meaning: "Varlıkların ve olayların gizli gayesini bilme, yerli yerinde ve bilgece hareket etme." },
+      { script: "تهذيب", word: "Tehzîb", meaning: "Ahlâkı güzelleştirme, kusurlardan arındırma, terbiye ve nezaket kazandırma." },
+      { script: "انصاف", word: "İnsâf", meaning: "Vicdan ve adaletle hükmetme, hakkaniyetten ayrılmama duygusu." },
+      { script: "تبسّم", word: "Tebessüm", meaning: "Sessiz ve zarif gülümseyiş; müminin kardeşine sadakası sayılan güler yüz." }
+    ];
+
+    // 5. GÜNÜN DEYİMİ VE ANLAMI
+    const IDIOMS = [
+      { title: "İnce Eleyip Sık Dokumak", meaning: "Bir işi bütün ayrıntılarıyla araştırmak, en küçük noktasını bile ihmal etmeden titizlikle incelemek." },
+      { title: "Çam Sakızı Çoban Armağanı", meaning: "Verilen hediyenin maddi değerinin küçük, fakat gönülden kopup gelen samimiyetinin büyük olduğunu anlatmak için söylenir." },
+      { title: "Ekmeğini Taştan Çıkarmak", meaning: "En zor şartlar altında bile çalışıp çabalayarak helal kazancını ve geçimini sağlayacak beceride olmak." },
+      { title: "Gönül Alma", meaning: "Kırılmış veya gücenmiş bir kimseye güzel bir söz ya da davranışla sevgisini gösterip onu hoşnut etmek." },
+      { title: "Sünger Çekmek", meaning: "Geçmişte yaşanmış tatsız bir olayı, kırgınlığı tamamen unutulmuş sayarak bir daha açmamak." },
+      { title: "Kılı Kırk Yarmak", meaning: "Aşırı derecede dikkatli ve özenli davranmak, hata yapmamak için meseleyi derinlemesine tartmak." },
+      { title: "Ağzından Bal Damlamak", meaning: "Çok tatlı, gönül okşayıcı, nazik ve dinleyenleri sevindiren güzel sözler söylemek." },
+      { title: "Ununu Elemiş, Eleğini Asmış", meaning: "Hayatta üzerine düşen vazifeleri tamamlamış, artık köşesine çekilip huzur arayan kimseler için kullanılır." },
+      { title: "Saman Altından Su Yürütmek", meaning: "Kimseye belli etmeden, sessizce ve gizliden gizliye kendi planlarını yürütmek." },
+      { title: "Gözü Yollarda Kalmak", meaning: "Çok sevdiği bir kimsenin gelmesini veya ondan hayırlı bir haber ulaşmasını özlemle beklemek." },
+      { title: "İki Ayağını Bir Pabuca Sokmak", meaning: "Bir işi hemen yapması için bir kimseyi çok sıkıştırmak, telaşlandırmak." },
+      { title: "Pabucu Dama Atılmak", meaning: "Daha yeni veya daha çok ilgi gören birinin gelmesiyle eski değerini ve itibarını yitirmek." }
+    ];
+
+    // 6. GÜNÜN MANİLERİ
+    const MANIS = [
+      "Bahçelerde mor meni,\nVerem ettin sen beni,\nYa sen İslâm'a gel,\nYa ben seveyim seni.",
+      "Kahve piştiği yerde,\nPişip taştığı yerde,\nGüzel çirkin aranmaz,\nGönül düştüğü yerde.",
+      "Deniz üstü köpürür,\nKayığa binsem götürür,\nBenim bu sevdalarım,\nBeni gurbete götürür.",
+      "Altın yüzük var benim,\nParmağıma dar benim,\nŞu yalancı dünyada,\nKadir bilen yar benim.",
+      "Elmayı bütün dildim,\nÇürüğünü seçmedim,\nSenin tatlı sözüne,\nBen ömrümü biçmedim.",
+      "Karanfil oylum oylum,\nGeliyor selvi boylum,\nSelvi boylum gelince,\nŞen olur benim gönlüm.",
+      "Gökte yıldız yüz altmış,\nKervan yola dizilmiş,\nİnsan sevdiği yardan,\nAyrılması güç imiş.",
+      "Su gelir millendirir,\nÇayırı çimlendirir,\nDosttan gelen bir selam,\nÖksüzü dillendirir.",
+      "Pencereden kar geliyor,\nSevdiğim yar geliyor,\nYarin güzel gözleri,\nCihana dar geliyor.",
+      "Dağlar başı dumanlı,\nKışın hali yamanlı,\nİyilik yap denize at,\nMevlâ bilir zamanlı."
+    ];
+
+    // 7. GÜNÜN BİLMECELERİ
+    const RIDDLES = [
+      { q: "Ben giderim o gider, arkamdan tıkır tıkır eder.", a: "Baston" },
+      { q: "Bir küçük fıçıcık, içi dolu turşucuk.", a: "Limon" },
+      { q: "Çarşıdan aldım bir tane, eve geldim bin tane.", a: "Nar" },
+      { q: "Altı mermer, üstü mermer, içinde bir bülbül öter.", a: "Dil" },
+      { q: "Uzaktan baktım bir taş, yanına vardım dört ayak bir baş.", a: "Kaplumbağa" },
+      { q: "Gece açılır, gündüz kapanır; gökyüzüne inciler saçılır.", a: "Yıldızlar" },
+      { q: "Sarıdır safran gibi, okunur Kur'an gibi, ya bunu bileceksin, ya bu gece öleceksin.", a: "Altın" },
+      { q: "Dal üstünde kilitli sandık.", a: "Ceviz" },
+      { q: "Yol üstünde yağlı kayış.", a: "Yılan" },
+      { q: "Her gün yeniden doğar, dünyaya haber yayar.", a: "Gazete / Takvim Yaprağı" },
+      { q: "Ne eli var ne ayağı, açar kapar her kapıyı.", a: "Rüzgâr" },
+      { q: "Akşam ektim nohudu, sabah baktım yok idi.", a: "Yıldızlar" }
+    ];
+
+    // 8. GÜNÜN FIKRALARI (TEBESSÜM KÖŞESİ)
+    const JOKES = [
+      {
+        title: "Nasreddin Hoca • Kazan Doğurdu",
+        text: "Nasreddin Hoca komşusundan ödünç bir kazan alır. İşi bitince kazanın içine küçük bir tencere koyup geri verir. Komşusu 'Hoca bu nedir?' diye sorunca, Hoca 'Gözün aydın, senin kazan doğurdu' der. Komşu sevinerek tencereyi alır. Bir süre sonra Hoca kazanı tekrar ödünç alır ama bu kez geri getirmez. Komşu kapıya dayanıp kazanını isteyince Hoca boynunu büker: 'Başın sağ olsun komşu, senin kazan sizlere ömür, öldü!' Komşu şaşırır: 'Aman Hoca, kazan hiç ölür mü?' Hoca cevabı yapıştırır: 'Doğurduğuna inanıyorsun da öldüğüne niçin inanmıyorsun?'"
+      },
+      {
+        title: "Nasreddin Hoca • Parayı Veren Düdüğü Çalar",
+        text: "Hoca bir gün pazara giderken mahallenin çocukları etrafını sarar. Hepsi birer düdük ısmarlar ama içlerinden yalnız biri düdük parasını Hoca'nın avucuna bırakır. Akşam Hoca pazardan dönerken çocuklar koşup düdüklerini isterler. Hoca cebinden tek bir düdük çıkarıp parayı veren çocuğa uzatır. Diğer çocuklar 'Hani bizim düdüğümüz?' diye sızlanınca Hoca gülümser: 'Evlatlarım, parayı veren düdüğü çalar!'"
+      },
+      {
+        title: "Nasreddin Hoca • Ya Tutarsa!",
+        text: "Hoca bir gün eline bir kâse yoğurt mayası alıp Akşehir Gölü'nün kıyısına iner ve kaşık kaşık göle maya çalmaya başlar. Oradan geçen köylüler merakla sorar: 'Hoca Efendi, ne yapıyorsun öyle?' Hoca gayet ciddi cevap verir: 'Göle yoğurt mayası çalıyorum.' Köylüler güler: 'İyi ama Hoca, koca göl hiç maya tutar mı?' Hoca sakalını sıvazlayıp cevap verir: 'Ben de biliyorum tutmayacağını ama, ya tutarsa!'"
+      },
+      {
+        title: "Nasreddin Hoca • Bindiği Dalı Kesmek",
+        text: "Hoca bir gün bahçedeki ağaca çıkıp oturduğu dalı baltayla kesmeye koyulur. Yoldan geçen bir yolcu seslenir: 'Aman Hoca Efendi, ne yapıyorsun? Oturduğun dalı kesiyorsun, şimdi düşeceksin!' Hoca adama aldırmaz, kesmeye devam eder. Az sonra dal kırılır ve Hoca pat diye yere düşer. Hemen kalkıp yolcunun peşinden koşar, yakasına yapışır: 'Bre adam, düşeceğimi bildin, öyleyse ne zaman öleceğimi de bilirsin, çabuk söyle!'"
+      },
+      {
+        title: "İncili Çavuş • Kürkün İtibarı",
+        text: "Nasreddin Hoca bir düğün evine gündelik eski kıyafetleriyle gider, kimse yüzüne bakmaz. Hoca eve dönüp en gösterişli kürkünü giyer, tekrar düğün evine gelir. Bu kez başköşeye oturtulur, önüne en âlâ yemekler dizilir. Hoca kürkünün yenini çorba kâsesine uzatıp 'Ye kürküm ye!' der. Ev sahipleri şaşırınca Hoca: 'İkram bana değil kürkümedir, öyleyse yemeği de o yesin!' der."
+      },
+      {
+        title: "Nasreddin Hoca • İpe Un Sermek",
+        text: "Komşusu Hoca'dan çamaşır ipini ödünç ister. Hoca vermek istemediği için içeri girip biraz bekledikten sonra çıkar ve 'Kusura bakma komşu, ipe un sermişler, veremeyeceğim' der. Komşu hayretle: 'Aman Hoca, ipe hiç un serilir mi?' deyince Hoca tebessüm eder: 'Vermeye gönlüm olmayınca ipe un da serilir komşu!'"
+      },
+      {
+        title: "Nasreddin Hoca • Dünyanın Ortası",
+        text: "Bir gün Hoca'ya 'Hoca Efendi, dünyanın ortası neresidir?' diye sorarlar. Hoca hiç düşünmeden eşeğinin sol ön ayağının bastığı yeri sopasıyla işaret eder: 'İşte tam burasıdır!' Soranlar 'Nereden belli?' deyince Hoca: 'İnanmıyorsanız buyurun ölçün, bir karış eksik ya da fazla çıkarsa söyleyin!' der."
+      }
+    ];
+
+    // 9. FAYDALI VE PRATİK BİLGİLER HAVUZU
+    const PRACTICAL_TIPS = [
+      { title: "Bakır Kapların Parlatılması", text: "Kararmış bakır cezve ve sahanlarınızı yarım limon ve bir tutam kaya tuzu ile ovup ılık suyla durularsanız ilk günkü parlaklığına kavuşur." },
+      { title: "Bayat Ekmekleri Değerlendirme", text: "Bayatlamaya yüz tutmuş ekmeklerin üzerine hafifçe su serpip fırında 5 dakika ısıtırsanız taze fırından çıkmış gibi yumuşar; dilimleyip kurutarak ev yapımı galeta unu da yapabilirsiniz." },
+      { title: "Ihlamur Demlemenin Püf Noktası", text: "Ihlamuru suyla birlikte uzun süre kaynatmak şifalı uçucu yağlarını azaltır. Kaynamış suyu ocaktan alıp ıhlamuru içine atarak 8-10 dakika ağzı kapalı demlemek en doğrusudur." },
+      { title: "Pirinç Pilavının Tane Tane Olması", text: "Pilav pişirirken suyuna birkaç damla limon suyu ve bir küp şeker ilave ederseniz pirinçler hem bembeyaz olur hem de tane tane dökülür." },
+      { title: "Ayakkabıların Kışlık Bakımı", text: "Yağmurlu havalarda ıslanan deri ayakkabıları soba veya kalorifer dibinde kurutmak deriyi çatlatır. İçine gazete kâğıdı doldurup oda sıcaklığında kurutmak ömrünü uzatır." },
+      { title: "Bakliyatların Böceklenmesini Önlemek", text: "Kuru fasulye, nohut, mercimek ve pirinç kavanozlarının içine birkaç adet kuru defne yaprağı ve bir diş soyulmamış sarımsak koyarsanız uzun süre bozulmadan saklanır." },
+      { title: "Mutfaktaki Kötü Kokuları Gidermek", text: "Balık veya kızartma sonrasında küçük bir cezvede suyun içine kabuk tarçın, birkaç karanfil ve limon kabuğu koyup kaynatırsanız evin havası anında ferahlar." },
+      { title: "Yünlü Giysilerin Korunması", text: "Mevsim sonunda kaldırılan yün kazak ve battaniyelerin arasına lavanta kesesi veya sedir ağacı parçaları yerleştirmek güvelere karşı en doğal korumadır." }
+    ];
+
+    // 10. GÜNÜN YEMEĞİ (MENÜSÜ) HAVUZU
+    const DAILY_MENUS = [
+      { items: ["Ezogelin Çorbası", "Hünkârbeğendi", "Mevsim Salatası", "Şekerpare"], tip: "Beğendi hazırlarken közlenmiş patlıcanları sütle ağır ağır pişirip muskat cevizi rendesi eklerseniz lezzeti katlanır." },
+      { items: ["Mercimek Çorbası", "İslim Kebabı", "Şehriyeli Pirinç Pilavı", "Sütlaç"], tip: "Fırın sütlacın üzerinin nar gibi kızarması için fırının en üst rafında sadece üst ızgarayı çalıştırarak pişirin." },
+      { items: ["Tarhana Çorbası", "Etli Kuru Fasulye", "Tereyağlı Bulgur Pilavı", "Cacık & Kabak Tatlısı"], tip: "Kuru fasulyeyi akşamdan ılık suya ıslatırken içine bir çay kaşığı karbonat atmak kabuk atmasını önler." },
+      { items: ["Yayla Çorbası", "Karnıyarık", "Tereyağlı Pirinç Pilavı", "İrmik Helvası"], tip: "İrmik helvasını kısık ateşte çam fıstıkları pembeleşene dek sabırla kavurmak kıvamının sırrıdır." },
+      { items: ["Düğün Çorbası", "İzmir Köfte", "Zeytinyağlı Fasulye", "Revani"], tip: "Revani şerbetini dökerken tatlının ılık, şerbetin soğuk olmasına dikkat ederseniz hamurlaşmaz." },
+      { items: ["Domates Çorbası", "Tas Kebabı", "Arpa Şehriyeli Pilav", "Ayva Tatlısı"], tip: "Ayva tatlısını pişirirken tencereye ayva çekirdeklerini ve bir iki karanfili eklerseniz doğal kırmızı rengini alır." },
+      { items: ["Tutmaç Çorbası", "Zeytinyağlı Yaprak Sarma", "Kuzu Tandır", "Güllaç"], tip: "Zeytinyağlı sarmaları pişirdikten sonra tencerenin kapağını açmadan kendi buharında soğutursanız kararmaz." }
+    ];
+
+    // 11. İSİM ÖNERİLERİ HAVUZU
+    const NAME_SUGGESTIONS = [
+      { girl: "Zülâl", girlM: "Saf, berrak, hafif ve tatlı su.", boy: "Kerem", boyM: "Cömertlik, asalet, eli açıklık." },
+      { girl: "Mihrimah", girlM: "Güneş ve ay; aydınlık yüzlü.", boy: "Selim", boyM: "Doğru, kusursuz, kalbi temiz kimse." },
+      { girl: "Feride", girlM: "Eşi benzeri olmayan, tek ve kıymetli inci.", boy: "Sinan", boyM: "Mızrak ucu; keskin zekâlı ve dirayetli." },
+      { girl: "Nihan", girlM: "Gizli, saklı, sır olarak korunan.", boy: "Alparslan", boyM: "Yiğit, cesur ve heybetli aslan." },
+      { girl: "Güzin", girlM: "Seçilmiş, beğenilmiş, seçkin.", boy: "Tarik", boyM: "Sabah yıldızı, karanlığı aydınlatan yol." },
+      { girl: "Leman", girlM: "Parıltı, ışıltı, göz kamaştıran parlaklık.", boy: "İhsan", boyM: "İyilik etme, bağışlama, güzellik." },
+      { girl: "Hüma", girlM: "Devlet kuşu, mutluluk ve talih simgesi.", boy: "Orhan", boyM: "Şehrin hâkimi, adaletli yönetici." },
+      { girl: "Dilruba", girlM: "Gönül çelen, kalpleri kendine bağlayan.", boy: "Kemal", boyM: "Olgunluk, bilgi ve fazilet tamlığı." }
+    ];
+
+    // 12. TARİHTE BUGÜN (Özel Günler + Genel Günlük Tarih Havuzu)
+    const SPECIAL_HISTORY_BY_MMDD = {
+      "10-29": [
+        { year: "1923", event: "Türkiye Büyük Millet Meclisi'nde Cumhuriyet ilan edildi ve Gazi Mustafa Kemal Atatürk ilk Cumhurbaşkanı seçildi." },
+        { year: "1933", event: "Cumhuriyetin 10. Yıl Kutlamalarında Atatürk ünlü Onuncu Yıl Nutku'nu okudu." },
+        { year: "1961", event: "İlk Türk yapımı otomobil olan 'Devrim', Cumhurbaşkanı Cemal Gürsel'e sunuldu." }
+      ],
+      "10-30": [
+        { year: "1918", event: "Osmanlı Devleti ile İtilaf Devletleri arasında Mondros Mütarekesi imzalandı." },
+        { year: "1923", event: "Cumhuriyetin ilk hükümeti İsmet İnönü başkanlığında kuruldu." },
+        { year: "1973", event: "Asya ile Avrupa'yı ilk kez karayoluyla birbirine bağlayan Boğaziçi Köprüsü (15 Temmuz Şehitler Köprüsü) törenle hizmete açıldı." }
+      ],
+      "10-31": [
+        { year: "1918", event: "Mustafa Kemal Paşa, Adana'da Yıldırım Orduları Grup Komutanlığı'nı Limon von Sanders'ten devraldı." },
+        { year: "1924", event: "Mustafa Kemal Paşa, Cumhuriyetin 1. yıl dönümünde Dumlupınar'da konuştu." },
+        { year: "1951", event: "Yaya geçidi çizgileri ilk kez İngiltere'de resmen kullanılmaya başlandı." }
+      ],
+      "04-23": [
+        { year: "1920", event: "Türkiye Büyük Millet Meclisi Ankara'da dualarla açıldı; Ulusal Egemenlik ve Çocuk Bayramı." },
+        { year: "1564", event: "İngiliz şair ve oyun yazarı William Shakespeare doğdu." }
+      ],
+      "05-19": [
+        { year: "1919", event: "Mustafa Kemal Paşa, Bandırma Vapuru ile Samsun'a çıkarak Milli Mücadele'yi başlattı." },
+        { year: "1938", event: "19 Mayıs, Gençlik ve Spor Bayramı olarak kabul edildi." }
+      ],
+      "08-30": [
+        { year: "1922", event: "Başkomutanlık Meydan Muharebesi zaferle sonuçlandı; Büyük Zafer Bayramı." }
+      ],
+      "11-10": [
+        { year: "1938", event: "Türkiye Cumhuriyeti'nin kurucusu Gazi Mustafa Kemal Atatürk, saat 09:05'te Dolmabahçe Sarayı'nda ebediyete intikal etti." }
+      ]
+    };
+
+    const GENERAL_HISTORY_POOL = [
+      [
+        { year: "1453", event: "İstanbul'da Fatih Sultan Mehmed Han tarafından ilk medrese vakfiyeleri tertip edildi." },
+        { year: "1840", event: "Osmanlı Devleti'nde ilk posta teşkilatı olan Postahane-i Âmire kuruldu." },
+        { year: "1928", event: "Millet Mektepleri talimatnamesi yayınlanarak yurt çapında okuma-yazma seferberliği başlatıldı." }
+      ],
+      [
+        { year: "1517", event: "Kutsal Emanetler İstanbul'a getirilerek Topkapı Sarayı Hırka-i Saadet Dairesi'ne yerleştirildi." },
+        { year: "1875", event: "Dünyanın en eski ikinci metrosu olan İstanbul Karaköy-Beyoğlu Tüneli seferlerine başladı." },
+        { year: "1934", event: "Soyadı Kanunu yürürlüğe girdi ve vatandaşların öz Türkçe soyadları alması kararlaştırıldı." }
+      ],
+      [
+        { year: "1557", event: "Mimar Sinan'ın kalfalık eseri olan Süleymaniye Camii ve Külliyesi törenle ibadete açıldı." },
+        { year: "1925", event: "Uluslararası takvim ve saat sistemi Türkiye Büyük Millet Meclisi'nde kabul edildi." },
+        { year: "1937", event: "İlk Türk demir-çelik fabrikasının temeli Karabük'te atıldı." }
+      ],
+      [
+        { year: "1609", event: "Sultanahmet Camii'nin temeli Sultan I. Ahmed tarafından İstanbul Atmeydanı'nda atıldı." },
+        { year: "1920", event: "Anadolu Ajansı, Milli Mücadele'nin sesini dünyaya duyurmak üzere Ankara'da kuruldu." },
+        { year: "1932", event: "Türk Dili Tetkik Cemiyeti (Türk Dil Kurumu) kurularak dil araştırmalarına başladı." }
+      ],
+      [
+        { year: "1478", event: "Topkapı Sarayı (Saray-ı Cedîd-i Âmire) inşası tamamlanarak devletin yönetim merkezi oldu." },
+        { year: "1868", event: "Kimsesiz çocukların eğitimi için Darüşşafaka Cemiyeti kuruldu." },
+        { year: "1931", event: "Türk Tarihi Tetkik Cemiyeti (Türk Tarih Kurumu) Ankara'da çalışmalarına başladı." }
+      ],
+      [
+        { year: "1575", event: "Mimar Sinan'ın ustalık eseri olan Edirne Selimiye Camii ibadete açıldı." },
+        { year: "1881", event: "İstanbul'da ilk şehir içi telefon hattı Beyoğlu ile Karaköy arasında tesis edildi." },
+        { year: "1933", event: "Sümerbank kurularak yerli dokuma ve sanayi hamlesi başlatıldı." }
+      ]
+    ];
+
+    /*************************************************************************
+     * YARDIMCI HESAPLAMA FONKSİYONLARI
+     *************************************************************************/
+
+    // Yılın kaçıncı günü (1 - 366)
+    function getDayOfYear(date) {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function isLeapYear(year) {
+      return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
+
+    // Tarihten deterministik tohum (seed) üretimi - her gün benzersiz kombinasyon
+    function getSeedForDate(date) {
+      const y = date.getFullYear();
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      return (y * 372) + (m * 31) + d;
+    }
+
+    // Hicri Tarih Hesaplama (Kuwaiti / Diyanet uyumlu Jülyen Gün algoritması)
+    function getHijriDate(date) {
+      // Tarayıcı Intl islamic-umalqura desteğini dene, yoksa matematiksel hesapla
+      try {
+        const parts = new Intl.DateTimeFormat('tr-TR-u-ca-islamic-umalqura', {
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric'
+        }).formatToParts(date);
+        const day = parseInt(parts.find(p => p.type === 'day').value, 10);
+        const month = parseInt(parts.find(p => p.type === 'month').value, 10);
+        const year = parseInt(parts.find(p => p.type === 'year').value, 10);
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year) && month >= 1 && month <= 12) {
+          return `${day} ${HIJRI_MONTHS_TR[month - 1]} ${year}`;
+        }
+      } catch (e) { /* Fallback to algorithmic */ }
+
+      // Matematiksel Hicri Hesap (Yedek)
+      const jd = Math.floor((date.getTime() / 86400000) + 2440587.5);
+      let l = jd - 1948440 + 10632;
+      const n = Math.floor((l - 1) / 10631);
+      l = l - 10631 * n + 354;
+      const j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) +
+                (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) -
+          (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+      const m = Math.floor((24 * l) / 709);
+      const d = l - Math.floor((709 * m) / 24);
+      const y = 30 * n + j - 30;
+      return `${d} ${HIJRI_MONTHS_TR[(m - 1) % 12]} ${y}`;
+    }
+
+    // Rumi Tarih Hesaplama (Miladi tarihten 13 gün geri, yıl - 584)
+    function getRumiDate(date) {
+      const rumiObj = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 13);
+      const rDay = rumiObj.getDate();
+      const rMonth = RUMI_MONTHS[rumiObj.getMonth()];
+      const rYear = rumiObj.getFullYear() - 584;
+      return `${rDay} ${rMonth} ${rYear}`;
+    }
+
+    // Hızır ve Kasım Günleri Hesabı (6 Mayıs = Hızır 1, 8 Kasım = Kasım 1)
+    function getHizirKasimStatus(date) {
+      const year = date.getFullYear();
+      const hizirStart = new Date(year, 4, 6); // 6 Mayıs
+      const kasimStart = new Date(year, 10, 8); // 8 Kasım
+
+      const currentMid = new Date(year, date.getMonth(), date.getDate());
+      if (currentMid >= hizirStart && currentMid < kasimStart) {
+        const diffDays = Math.floor((currentMid - hizirStart) / 86400000) + 1;
+        return `Hızır: ${diffDays}. Gün`;
+      } else if (currentMid >= kasimStart) {
+        const diffDays = Math.floor((currentMid - kasimStart) / 86400000) + 1;
+        return `Kasım: ${diffDays}. Gün`;
+      } else {
+        const prevKasim = new Date(year - 1, 10, 8);
+        const diffDays = Math.floor((currentMid - prevKasim) / 86400000) + 1;
+        return `Kasım: ${diffDays}. Gün`;
+      }
+    }
+
+    // Güneş Burcu Hesabı
+    function getZodiacSign(month, day) {
+      if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Kova";
+      if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return "Balık";
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return "Koç";
+      if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return "Boğa";
+      if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return "İkizler";
+      if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return "Yengeç";
+      if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Aslan";
+      if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Başak";
+      if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Terazi";
+      if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Akrep";
+      if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "Yay";
+      return "Oğlak";
+    }
+
+    // Ayın Evresi Hesabı (29.53 günlük sinodik döngü)
+    function getMoonPhaseName(date) {
+      const refNewMoon = Date.UTC(2000, 0, 6, 18, 14, 0);
+      const currentUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+      const synodic = 29.53058867;
+      const age = (((currentUTC - refNewMoon) / 86400000) % synodic + synodic) % synodic;
+      if (age < 1.8) return "Yeni Ay (Hilâl)";
+      if (age < 7.4) return "Hilâl (Büyüyen)";
+      if (age < 11.1) return "İlk Dördün";
+      if (age < 14.8) return "Şişkin Ay";
+      if (age < 16.6) return "Dolunay (Bedir)";
+      if (age < 22.1) return "Küçülen Ay";
+      if (age < 25.8) return "Son Dördün";
+      return "Eski Hilâl";
+    }
+
+    // Astronomik Namaz Vakitleri Hesabı (Güneş deklinasyonu + Zaman denklemi + Enlem/Boylam)
+    function calculatePrayerTimes(date, cityKey) {
+      const city = CITIES[cityKey] || CITIES.istanbul;
+      const doy = getDayOfYear(date);
+      const rad = Math.PI / 180;
+      const deg = 180 / Math.PI;
+
+      // Gama açısı (radyan)
+      const gamma = ((2 * Math.PI) / 365) * (doy - 1);
+
+      // Zaman Denklemi (dakika) ve Güneş Deklinasyonu (radyan)
+      const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma)
+        - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+      const decl = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+        - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
+        - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
+
+      const latRad = city.lat * rad;
+
+      // Saat açısı fonksiyonu (ufuk altı açı derece cinsinden)
+      function getHourAngleHours(angleDeg) {
+        const z = (90 + angleDeg) * rad;
+        const cosH = (Math.cos(z) - Math.sin(latRad) * Math.sin(decl)) / (Math.cos(latRad) * Math.cos(decl));
+        const clamped = Math.max(-0.99, Math.min(0.99, cosH));
+        return (Math.acos(clamped) * deg) / 15;
+      }
+
+      // Türkiye sabit saat dilimi UTC+3
+      const tz = 3;
+      const dhuhrHours = 12 + tz - (city.lon / 15) - (eqTime / 60);
+
+      const sunAngleH = getHourAngleHours(0.833);
+      const imsakAngleH = getHourAngleHours(18.0);
+      const yatsiAngleH = getHourAngleHours(17.0);
+
+      // İkindi (Asr-ı Evvel: gölge boyu = 1 + tan(|lat - decl|))
+      const shadowFactor = 1 + Math.tan(Math.abs(latRad - decl));
+      const asrAlt = Math.atan(1 / shadowFactor);
+      const cosAsr = (Math.sin(asrAlt) - Math.sin(latRad) * Math.sin(decl)) / (Math.cos(latRad) * Math.cos(decl));
+      const ikindiH = (Math.acos(Math.max(-0.99, Math.min(0.99, cosAsr))) * deg) / 15;
+
+      // Diyanet temkin payları (dakika)
+      const imsak = dhuhrHours - imsakAngleH - (2 / 60);
+      const gunes = dhuhrHours - sunAngleH - (6 / 60);
+      const ogle = dhuhrHours + (5 / 60);
+      const ikindi = dhuhrHours + ikindiH + (4 / 60);
+      const aksam = dhuhrHours + sunAngleH + (7 / 60);
+      const yatsi = dhuhrHours + yatsiAngleH + (2 / 60);
+
+      function fmt(h) {
+        let totalMin = Math.round(((h % 24) + 24) % 24 * 60);
+        const hh = Math.floor(totalMin / 60) % 24;
+        const mm = totalMin % 60;
+        return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+      }
+
+      const daylightMinutes = Math.round((aksam - gunes) * 60);
+      const dlHours = Math.floor(daylightMinutes / 60);
+      const dlMins = daylightMinutes % 60;
+
+      return {
+        imsak: fmt(imsak),
+        gunes: fmt(gunes),
+        ogle: fmt(ogle),
+        ikindi: fmt(ikindi),
+        aksam: fmt(aksam),
+        yatsi: fmt(yatsi),
+        daylight: `${dlHours} s ${dlMins} dk`,
+        city
+      };
+    }
+
+    // Halk Takvimi Notunu Bulma
+    function getFolkNoteForDate(month, day) {
+      const mVal = month * 100 + day;
+      for (const item of FOLK_CALENDAR_EVENTS) {
+        const startVal = item.startM * 100 + item.startD;
+        const endVal = item.endM * 100 + item.endD;
+        if (mVal >= startVal && mVal <= endVal) {
+          return item.note;
+        }
+      }
+      return "Mevsim rüzgârlarının esip toprağın bereketlendiği günler.";
+    }
+
+    // Aya Göre Mevsimsel Atasözü
+    const MONTHLY_PROVERBS = [
+      "Ocak ayında dizleri, Şubat ayında gözleri koru.",
+      "Şubat'ın arpası, Mart'ın sıpası makbuldür.",
+      "Mart kapıdan baktırır, kazma kürek yaktırır.",
+      "Nisan yağmuru altın araba, gümüş tekerlektir.",
+      "Mayıs'ta yağmur yağarsa her damlası altındır.",
+      "Haziran'da orak biçen, kışın rahat eder.",
+      "Temmuz'da gölge kovalayan, kışın aç kalır.",
+      "Ağustos'ta beyni kaynayanın, zemheride kazanı kaynar.",
+      "Eylül'de bağ bozulur, kışlık azık dizilir.",
+      "Ekim eken biçim biçer; vakti gözeten murada erer.",
+      "Kasım'da kalkan, kışın salkım salkım yer.",
+      "Aralık'ta kar yağarsa ambarlar buğdayla dolar."
+    ];
+
+    /*************************************************************************
+     * TAKVİM YAPRAĞINI EKRANA YAZDIRMA (RENDER) FONKSİYONU
+     *************************************************************************/
+    let currentSelectedDate = new Date();
+    let currentCity = "istanbul";
+
+    function formatInputDate(d) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function renderCalendarSheet(date) {
+      const year = date.getFullYear();
+      const monthIdx = date.getMonth(); // 0..11
+      const monthNum = monthIdx + 1;
+      const day = date.getDate();
+      const dayOfWeek = DAYS_TR[date.getDay()];
+      const monthName = MONTHS_TR[monthIdx];
+
+      const doy = getDayOfYear(date);
+      const totalDaysInYear = isLeapYear(year) ? 366 : 365;
+      const remainingDays = totalDaysInYear - doy;
+      const seed = getSeedForDate(date);
+
+      // Mevsim etiketi
+      let seasonName = "KIŞ MEVSİMİ";
+      if (monthNum >= 3 && monthNum <= 5) seasonName = "İLKBAHAR MEVSİMİ";
+      else if (monthNum >= 6 && monthNum <= 8) seasonName = "YAZ MEVSİMİ";
+      else if (monthNum >= 9 && monthNum <= 11) seasonName = "SONBAHAR MEVSİMİ";
+
+      // 1. Üst bilgi ve Tarihler
+      document.getElementById("dayOfYearInfo").textContent = `Yılın ${doy}. Günü • Kalan: ${remainingDays}`;
+      document.getElementById("seasonBadge").textContent = seasonName;
+      document.getElementById("hijriDateText").textContent = getHijriDate(date);
+      document.getElementById("gregorianFullText").textContent = `${day} ${monthName} ${year}`;
+      document.getElementById("rumiDateText").textContent = getRumiDate(date);
+
+      // 2. Orta Büyük Rakam ve Ay/Gün Başlıkları
+      document.getElementById("monthBanner").textContent = `${monthName.toUpperCase()} ${year}`;
+      document.getElementById("dayNumberGiant").textContent = day;
+      document.getElementById("dayNameBanner").textContent = dayOfWeek.toUpperCase();
+
+      // 3. Sol & Sağ Yan Paneller (Halk Takvimi, Burç, Hızır/Kasım, Ay Hali)
+      document.getElementById("hizirKasimText").textContent = getHizirKasimStatus(date);
+      document.getElementById("zodiacText").textContent = getZodiacSign(monthNum, day);
+      document.getElementById("moonPhaseText").textContent = getMoonPhaseName(date);
+      document.getElementById("folkCalendarNote").textContent = `"${getFolkNoteForDate(monthNum, day)}"`;
+      document.getElementById("seasonalProverbBox").textContent = `"${MONTHLY_PROVERBS[monthIdx]}"`;
+
+      // 4. Namaz Vakitleri
+      const prayers = calculatePrayerTimes(date, currentCity);
+      document.getElementById("prayerCityTitle").textContent = `${prayers.city.name.toUpperCase()} İÇİN NAMAZ VAKİTLERİ`;
+      document.getElementById("timeImsak").textContent = prayers.imsak;
+      document.getElementById("timeGunes").textContent = prayers.gunes;
+      document.getElementById("timeOgle").textContent = prayers.ogle;
+      document.getElementById("timeIkindi").textContent = prayers.ikindi;
+      document.getElementById("timeAksam").textContent = prayers.aksam;
+      document.getElementById("timeYatsi").textContent = prayers.yatsi;
+      document.getElementById("daylightDurationText").textContent = prayers.daylight;
+      document.getElementById("qiblaTimeText").textContent = prayers.city.qibla;
+      document.getElementById("cityCoordText").textContent = `${prayers.city.name} (${Math.round(prayers.city.lat)}°K)`;
+
+      const auspiciousList = ["Kuşluk Vakti", "Seher Vakti", "İkindi Sonrası", "Öğle Öncesi", "Sabah Erken Vakit"];
+      document.getElementById("auspiciousTimeText").textContent = auspiciousList[seed % auspiciousList.length];
+
+      // 5. Günün Ayeti ve Günün Sözü
+      const verse = VERSES[seed % VERSES.length];
+      document.getElementById("dailyVerseText").textContent = `"${verse.text}"`;
+      document.getElementById("dailyVerseSource").textContent = `— ${verse.source}`;
+
+      const quote = QUOTES[(seed * 3) % QUOTES.length];
+      document.getElementById("dailyQuoteText").textContent = `"${quote.text}"`;
+      document.getElementById("dailyQuoteAuthor").textContent = `— ${quote.author}`;
+
+      // 6. Tarihte Bugün
+      const mmddKey = `${String(monthNum).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      document.getElementById("historyDateBadge").textContent = `${day} ${monthName}`;
+      const historyEvents = SPECIAL_HISTORY_BY_MMDD[mmddKey] || GENERAL_HISTORY_POOL[seed % GENERAL_HISTORY_POOL.length];
+      const historyListEl = document.getElementById("historyList");
+      historyListEl.innerHTML = historyEvents.map(item =>
+        `<li><span class="history-year">${day} ${monthName} ${item.year}:</span>${item.event}</li>`
+      ).join("");
+
+      // 7. Osmanlıca Lügatçe
+      const ottoman = OTTOMAN_WORDS[seed % OTTOMAN_WORDS.length];
+      document.getElementById("ottomanScript").textContent = ottoman.script;
+      document.getElementById("ottomanWord").textContent = ottoman.word;
+      document.getElementById("ottomanMeaning").textContent = ottoman.meaning;
+
+      // 8. Günün Deyimi
+      const idiom = IDIOMS[(seed * 5) % IDIOMS.length];
+      document.getElementById("idiomTitle").textContent = idiom.title;
+      document.getElementById("idiomMeaning").textContent = idiom.meaning;
+
+      // 9. Günün Manisi ve Bilmecesi
+      const mani = MANIS[(seed * 7) % MANIS.length];
+      document.getElementById("dailyMani").innerHTML = mani.replace(/\n/g, "<br>");
+
+      const riddle = RIDDLES[(seed * 11) % RIDDLES.length];
+      document.getElementById("riddleQuestion").textContent = riddle.q;
+      const riddleAnsEl = document.getElementById("riddleAnswer");
+      const riddleBtnEl = document.getElementById("riddleToggleBtn");
+      riddleAnsEl.textContent = `Cevap: ${riddle.a}`;
+      riddleAnsEl.style.display = "none";
+      riddleBtnEl.textContent = "Cevabı Göster";
+
+      // 10. Günün Fıkrası
+      const joke = JOKES[seed % JOKES.length];
+      document.getElementById("jokeTitleBadge").textContent = joke.title;
+      document.getElementById("dailyJokeText").textContent = joke.text;
+
+      // 11. Pratik Bilgiler
+      const tip = PRACTICAL_TIPS[(seed * 2) % PRACTICAL_TIPS.length];
+      document.getElementById("practicalTitle").textContent = tip.title;
+      document.getElementById("practicalText").textContent = tip.text;
+
+      // 12. Günün Menüsü (Yemeği)
+      const menu = DAILY_MENUS[seed % DAILY_MENUS.length];
+      document.getElementById("menuPills").innerHTML = menu.items.map(i => `<span class="menu-pill">${i}</span>`).join("");
+      document.getElementById("menuRecipeTip").textContent = `Püf Noktası: ${menu.tip}`;
+
+      // 13. İsim Önerileri
+      const names = NAME_SUGGESTIONS[(seed * 3) % NAME_SUGGESTIONS.length];
+      document.getElementById("girlNameTitle").textContent = `Kız: ${names.girl}`;
+      document.getElementById("girlNameMeaning").textContent = names.girlM;
+      document.getElementById("boyNameTitle").textContent = `Erkek: ${names.boy}`;
+      document.getElementById("boyNameMeaning").textContent = names.boyM;
+
+      // 14. Altbilgi Yaprak Numarası ve Tarih Seçici Senkronizasyonu
+      document.getElementById("footerSerialNo").textContent = `Yaprak No: ${year} / ${doy}`;
+      document.getElementById("datePicker").value = formatInputDate(date);
+    }
+
+    /*************************************************************************
+     * CANLI ANALOG VE DİJİTAL SAAT ÇALIŞTIRICI
+     *************************************************************************/
+    function updateClockHands() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const hourDeg = ((hours % 12) + minutes / 60) * 30;
+      const minDeg = (minutes + seconds / 60) * 6;
+      const secDeg = seconds * 6;
+
+      const hourHand = document.getElementById("hourHand");
+      const minuteHand = document.getElementById("minuteHand");
+      const secondHand = document.getElementById("secondHand");
+      const digitalClockText = document.getElementById("digitalClockText");
+
+      if (hourHand) hourHand.setAttribute("transform", `rotate(${hourDeg} 100 100)`);
+      if (minuteHand) minuteHand.setAttribute("transform", `rotate(${minDeg} 100 100)`);
+      if (secondHand) secondHand.setAttribute("transform", `rotate(${secDeg} 100 100)`);
+      if (digitalClockText) {
+        digitalClockText.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+    }
+
+    /*************************************************************************
+     * YAPRAK KOPARMA SES EFEKTİ (Web Audio API ile Doğal Kağıt Hışırtısı)
+     *************************************************************************/
+    function playPaperTearSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const duration = 0.28;
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          const progress = i / bufferSize;
+          const envelope = Math.sin(progress * Math.PI) * (1 - progress * 0.4);
+          data[i] = (Math.random() * 2 - 1) * envelope * 0.25;
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1400, ctx.currentTime);
+        filter.Q.setValueAtTime(1.8, ctx.currentTime);
+
+        noise.connect(filter);
+        filter.connect(ctx.destination);
+        noise.start();
+      } catch (err) {
+        // Ses çalınamazsa sessizce devam et
+      }
+    }
+
+    /*************************************************************************
+     * YAPRAK KOPARMA ANİMASYONU VE ETKİLEŞİMLER
+     *************************************************************************/
+    let isAnimatingTear = false;
+
+    function tearSheetAndAdvance(daysDelta = 1) {
+      if (isAnimatingTear) return;
+      isAnimatingTear = true;
+
+      const sheet = document.getElementById("calendarSheet");
+      playPaperTearSound();
+      sheet.classList.remove("fresh");
+      sheet.classList.add("tearing");
+
+      setTimeout(() => {
+        currentSelectedDate = new Date(
+          currentSelectedDate.getFullYear(),
+          currentSelectedDate.getMonth(),
+          currentSelectedDate.getDate() + daysDelta
+        );
+        renderCalendarSheet(currentSelectedDate);
+
+        sheet.classList.remove("tearing");
+        sheet.classList.add("fresh");
+        isAnimatingTear = false;
+      }, 640);
+    }
+
+    // Bilmece cevabı aç/kapa
+    document.getElementById("riddleToggleBtn").addEventListener("click", () => {
+      const ans = document.getElementById("riddleAnswer");
+      const btn = document.getElementById("riddleToggleBtn");
+      const hidden = ans.style.display === "none";
+      ans.style.display = hidden ? "block" : "none";
+      btn.textContent = hidden ? "Cevabı Gizle" : "Cevabı Göster";
+    });
+
+    // Yaprak Kopar (Yarına Geç) butonları
+    document.getElementById("btnTearSheet").addEventListener("click", () => tearSheetAndAdvance(1));
+    document.getElementById("cornerPeel").addEventListener("click", () => tearSheetAndAdvance(1));
+
+    // Önceki Gün
+    document.getElementById("btnPrevDay").addEventListener("click", () => {
+      currentSelectedDate = new Date(
+        currentSelectedDate.getFullYear(),
+        currentSelectedDate.getMonth(),
+        currentSelectedDate.getDate() - 1
+      );
+      renderCalendarSheet(currentSelectedDate);
+    });
+
+    // Bugüne Dön
+    document.getElementById("btnToday").addEventListener("click", () => {
+      currentSelectedDate = new Date();
+      renderCalendarSheet(currentSelectedDate);
+    });
+
+    // Tarih Seçici (Date Picker)
+    document.getElementById("datePicker").addEventListener("change", (e) => {
+      if (!e.target.value) return;
+      const [y, m, d] = e.target.value.split("-").map(Number);
+      currentSelectedDate = new Date(y, m - 1, d);
+      renderCalendarSheet(currentSelectedDate);
+    });
+
+    // Şehir Seçimi
+    document.getElementById("citySelect").addEventListener("change", (e) => {
+      currentCity = e.target.value;
+      renderCalendarSheet(currentSelectedDate);
+    });
+
+    // Klavye Sağ/Sol Ok Tuşları ile Yaprak Gezintisi
+    window.addEventListener("keydown", (e) => {
+      if (["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+      if (e.key === "ArrowRight") {
+        tearSheetAndAdvance(1);
+      } else if (e.key === "ArrowLeft") {
+        document.getElementById("btnPrevDay").click();
+      }
+    });
+
+    // İlk Yükleme: Sistemin Gerçek Tarihiyle Başlat
+    updateClockHands();
+    setInterval(updateClockHands, 1000);
+    renderCalendarSheet(currentSelectedDate);
+  </script>
+</body>
+</html>
